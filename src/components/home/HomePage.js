@@ -1,32 +1,31 @@
-import React, { useState, useEffect } from 'react'
-import Card from '../card/Card'
-import styles from './home.module.css'
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from "react";
+import Card from "../card/Card";
+import styles from "./home.module.css";
+import { connect } from "react-redux";
+import { removeCharacterAction } from "../../redux/charsDuck";
 
+function Home({ chars, removeCharacterAction }) {
+  function renderCharacter() {
+    let char = chars[0];
+    return <Card leftClick={nextCharacter} {...char} />;
+  }
 
-function Home({ chars }) {
+  function nextCharacter() {
+    removeCharacterAction();
+  }
 
-    function renderCharacter() {
-        let char = chars[0]
-        return (
-            <Card {...char} />
-        )
-    }
-
-    return (
-        <div className={styles.container}>
-            <h2>Personajes de Rick y Morty</h2>
-            <div>
-                {renderCharacter()}
-            </div>
-        </div>
-    )
+  return (
+    <div className={styles.container}>
+      <h2>Personajes de Rick y Morty</h2>
+      <div>{renderCharacter()}</div>
+    </div>
+  );
 }
 
 function mapState(state) {
-    return {
-        chars: state.charsReducer.array        
-    }
+  return {
+    chars: state.charsReducer.array
+  };
 }
 
-export default connect(mapState, null)(Home);
+export default connect(mapState, { removeCharacterAction })(Home);
