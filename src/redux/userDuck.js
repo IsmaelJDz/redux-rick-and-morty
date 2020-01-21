@@ -45,6 +45,17 @@ function saveStorage(storage) {
 
 // action (action creator)
 
+export let restoreSessionAcion = () => dispatch => {
+  let storage = localStorage.getItem('storage')
+  storage = JSON.parse(storage)
+  if (storage && storage.user) {
+    dispatch({
+      type: LOGIN_SUCCESS,
+      payload: storage.user
+    })
+  }
+}
+
 export let doGoogleLoginAction = () => (dispatch, getState) => {
   dispatch({
     type: LOGIN
@@ -61,7 +72,7 @@ export let doGoogleLoginAction = () => (dispatch, getState) => {
           photoURL: user.photoURL
         }
       });
-      saveStorage(getState);
+      saveStorage(getState());
     })
     .catch(e => {
       console.log("====================================");
