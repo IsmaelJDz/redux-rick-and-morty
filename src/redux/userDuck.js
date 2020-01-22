@@ -1,4 +1,4 @@
-import { loginWithGoogle } from "../firebase";
+import { loginWithGoogle, signOutGoogle } from "../firebase";
 
 // constantes
 let initialDate = {
@@ -9,6 +9,8 @@ let initialDate = {
 let LOGIN = "LOGIN";
 let LOGIN_SUCCESS = "LOGIN_SUCCESS";
 let LOGIN_ERROR = "LOGIN_ERROR";
+
+let LOG_OUT = "LOG_OUT";
 
 // reducer
 export default function reducer(state = initialDate, action) {
@@ -26,6 +28,11 @@ export default function reducer(state = initialDate, action) {
         ...action.payload,
         loggedIn: true
       };
+    
+    case LOG_OUT:
+      return {
+        ...initialDate,
+      }
 
     case LOGIN_ERROR:
       return {
@@ -41,6 +48,14 @@ export default function reducer(state = initialDate, action) {
 //aux
 function saveStorage(storage) {
   localStorage.storage = JSON.stringify(storage);
+}
+
+export let logOutAction = () => (dispatch, getState) => {
+  signOutGoogle()
+  dispatch({
+    type: LOG_OUT
+  })
+  localStorage.removeItem('storage')
 }
 
 // action (action creator)
