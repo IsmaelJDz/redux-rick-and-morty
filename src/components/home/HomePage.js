@@ -2,16 +2,20 @@ import React, { useState, useEffect } from "react";
 import Card from "../card/Card";
 import styles from "./home.module.css";
 import { connect } from "react-redux";
-import { removeCharacterAction } from "../../redux/charsDuck";
+import { removeCharacterAction, addToFavoritesAction } from "../../redux/charsDuck";
 
-function Home({ chars, removeCharacterAction }) {
+function Home({ chars, addToFavoritesAction ,removeCharacterAction }) {
   function renderCharacter() {
     let char = chars[0];
-    return <Card leftClick={nextCharacter} {...char} />;
+    return <Card rightClick={addFav} leftClick={nextCharacter} {...char} />;
   }
 
   function nextCharacter() {
     removeCharacterAction();
+  }
+
+  function addFav() {
+    addToFavoritesAction();
   }
 
   return (
@@ -28,4 +32,4 @@ function mapState(state) {
   };
 }
 
-export default connect(mapState, { removeCharacterAction })(Home);
+export default connect(mapState, { addToFavoritesAction, removeCharacterAction })(Home);

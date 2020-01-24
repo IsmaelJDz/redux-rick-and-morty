@@ -1,10 +1,12 @@
 import axios from "axios";
+import { updateDataBase } from "../firebase";
 
 //Constantes
 let initialData = {
   fetching: false,
   array: [],
-  current: {}
+  current: {},
+  favorites: []
 };
 
 let URL = "https://rickandmortyapi.com/api/character";
@@ -12,6 +14,7 @@ let GET_CHARACTERS = "GET_CHARACTERS";
 let GET_CHARACTERS_SUCCESS = "GET_CHARACTERS_SUCCESS";
 let GET_CHARACTERS_ERROR = "GET_CHARACTERS_ERROR";
 let REMOVE_CHARACTER = "REMOVE_CHARACTER";
+let ADD_TO_FAVORITES = "ADD_TO_FAVORITES";
 
 //Reducer
 export default function reducer(state = initialData, action) {
@@ -42,12 +45,31 @@ export default function reducer(state = initialData, action) {
         array: action.payload
       };
 
+    case ADD_TO_FAVORITES:
+      return {
+        ...state,
+        ...action.payload
+      }
+
     default:
       return state;
   }
 }
 
 //Actions (thunks)
+export let addToFavoritesAction = () => (dispatch, getState) => {
+  let { array, favorites } = getState().charsReducer
+  let { uid } = getState().user
+  let char = array.shift()
+  favorites.push(char)
+  updateDataBase(favorites, uid)
+  dispatch({
+    type: ADD_TO_FAVORITES,
+    payload: {array:[...array], favorites: [...favorites]}
+  })
+}
+
+
 export let removeCharacterAction = () => (dispatch, getState) => {
   let { array } = getState().charsReducer;
   array.shift();
