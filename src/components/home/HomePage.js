@@ -7,15 +7,15 @@ import { removeCharacterAction, addToFavoritesAction } from "../../redux/charsDu
 function Home({ chars, addToFavoritesAction ,removeCharacterAction }) {
   function renderCharacter() {
     let char = chars[0];
-    return <Card rightClick={addFav} leftClick={nextCharacter} {...char} />;
+    return <Card rightClick={(id) => addFav(id)} leftClick={nextCharacter} {...char} />;
   }
 
   function nextCharacter() {
     removeCharacterAction();
   }
 
-  function addFav() {
-    addToFavoritesAction();
+  function addFav(id) {
+    addToFavoritesAction(id);
   }
 
   return (

@@ -1,4 +1,5 @@
 import { loginWithGoogle, signOutGoogle } from "../firebase";
+import { retreiveFavs } from "./charsDuck"
 
 // constantes
 let initialDate = {
@@ -47,6 +48,7 @@ export default function reducer(state = initialDate, action) {
 
 //aux
 function saveStorage(storage) {
+  console.log(storage)
   localStorage.storage = JSON.stringify(storage);
 }
 
@@ -88,6 +90,7 @@ export let doGoogleLoginAction = () => (dispatch, getState) => {
         }
       });
       saveStorage(getState());
+      retreiveFavs()(dispatch, getState)
     })
     .catch(e => {
       console.log("====================================");

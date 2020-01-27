@@ -10,10 +10,10 @@ function onClick(side) {
 }
 
 export default function Card({
-    name, image, rightClick, leftClick, hide
+    name, image, rightClick, leftClick, hide, id
 }) {
     return (
-        <div className={styles.container}>
+        <div className={styles.container} id={id}>
             <div className={styles.card}>
                 <img alt="rick" src={image} />
                 <p className={styles.name}>
@@ -29,7 +29,7 @@ export default function Card({
                         />
                     </div>
                     <div
-                        onClick={rightClick || onClick("right")}
+                        onClick={() => {rightClick(id)}}
                         className={styles.right}>
                         <FontAwesome
                             name="heart"

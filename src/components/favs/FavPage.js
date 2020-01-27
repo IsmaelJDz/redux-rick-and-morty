@@ -6,7 +6,7 @@ import { connect } from "react-redux"
 function FavPage({ characters = [0] }) {
     function renderCharacter(char, i) {
         return (
-            <Card hide {...char} key={i} />
+            <Card hide {...char} key={i} id={char.id} />
         )
     }
     return (

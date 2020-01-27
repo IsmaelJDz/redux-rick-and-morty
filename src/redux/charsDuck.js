@@ -1,5 +1,5 @@
 import axios from "axios";
-import { updateDataBase } from "../firebase";
+import { updateDataBase, getFavs } from "../firebase";
 
 //Constantes
 let initialData = {
@@ -15,6 +15,12 @@ let GET_CHARACTERS_SUCCESS = "GET_CHARACTERS_SUCCESS";
 let GET_CHARACTERS_ERROR = "GET_CHARACTERS_ERROR";
 let REMOVE_CHARACTER = "REMOVE_CHARACTER";
 let ADD_TO_FAVORITES = "ADD_TO_FAVORITES";
+
+let GET_FAVS = "GET_FAVS";
+let GET_FAVS_SUCCESS = "GET_FAVS_SUCCESS";
+let GET_FAVS_ERROR = "GET_FAVS_ERROR";
+
+let GET_NEW_CHARACTERS = "GET_NEW_CHARACTERS"
 
 //Reducer
 export default function reducer(state = initialData, action) {
@@ -51,22 +57,98 @@ export default function reducer(state = initialData, action) {
         ...action.payload
       }
 
+    case GET_FAVS:
+      return {
+        ...state,
+        fetching: true,    
+      }
+
+    case GET_FAVS_SUCCESS:
+      return {
+        ...state,
+        fetching: false,
+        favorites: action.payload
+      }
+
+    case GET_FAVS_ERROR:
+      return {
+        ...state,
+        fetching: false,
+        error: action.payload
+      }
+
+    case GET_NEW_CHARACTERS: 
+      return {
+        ...state,
+        fetching: false,
+        array: action.payload
+      }
+
     default:
       return state;
   }
 }
 
 //Actions (thunks)
-export let addToFavoritesAction = () => (dispatch, getState) => {
+export let retreiveFavs = () => (dispatch, getState) => {
+  dispatch({
+    type: GET_FAVS
+  })
+
+  let {uid} = getState().user;
+  return getFavs(uid)
+    .then(array => {
+      dispatch({
+        type: GET_FAVS_SUCCESS,
+        payload: [...array]
+      })
+    })
+    .catch(e => {  
+      console.log(e) 
+      dispatch({
+        type: GET_FAVS_ERROR,
+        payload: e.message
+      })
+    })
+}
+
+export let addToFavoritesAction = (id) => (dispatch, getState) => {
+  debugger;
   let { array, favorites } = getState().charsReducer
   let { uid } = getState().user
-  let char = array.shift()
-  favorites.push(char)
-  updateDataBase(favorites, uid)
-  dispatch({
-    type: ADD_TO_FAVORITES,
-    payload: {array:[...array], favorites: [...favorites]}
-  })
+  if (favorites.length > 0) {
+    // favorites.forEach(idFavorite => {
+    //   console.log(id)
+    //   console.log(idFavorite.id)
+    //   if(JSON.parse(id) === idFavorite.id) {
+    //       console.log('Este Id ya esta')
+    //       array.shift()
+    //       dispatch({
+    //         type: GET_NEW_CHARACTERS,
+    //         payload: [...array]
+    //       })
+    //   }
+    //   else {
+    //     let char = array.shift()
+    //     favorites.push(char)
+    //     updateDataBase(favorites, uid)
+    //     dispatch({
+    //       type: ADD_TO_FAVORITES,
+    //       payload: {array:[...array], favorites: [...favorites]}
+    //     })
+    //   }
+    // }) 
+  }
+  else {
+    let char = array.shift()
+    favorites.push(char)
+    updateDataBase(favorites, uid)
+    dispatch({
+      type: ADD_TO_FAVORITES,
+      payload: {array:[...array], favorites: [...favorites]}
+    })
+  }
+
 }
 
 
