@@ -107,25 +107,28 @@ export default function reducer(state = initialData, action) {
 
 //Actions (thunks)
 export let retreiveFavs = () => (dispatch, getState) => {
-  dispatch({
-    type: GET_FAVS
-  })
+    let {uid} = getState().user;
+    if (uid !== undefined) {
+      dispatch({
+        type: GET_FAVS
+      })
+      let {uid} = getState().user;
+      return getFavs(uid)
+        .then(array => {
+          dispatch({
+            type: GET_FAVS_SUCCESS,
+            payload: [...array]
+          })
+        })
+        .catch(e => {  
+          console.log(e) 
+          dispatch({
+            type: GET_FAVS_ERROR,
+            payload: e.message
+          })
+        })
+    }
 
-  let {uid} = getState().user;
-  return getFavs(uid)
-    .then(array => {
-      dispatch({
-        type: GET_FAVS_SUCCESS,
-        payload: [...array]
-      })
-    })
-    .catch(e => {  
-      console.log(e) 
-      dispatch({
-        type: GET_FAVS_ERROR,
-        payload: e.message
-      })
-    })
 }
 
 export let addToFavoritesAction = (id) => (dispatch, getState) => {

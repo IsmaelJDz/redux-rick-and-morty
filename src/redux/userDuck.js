@@ -48,7 +48,6 @@ export default function reducer(state = initialDate, action) {
 
 //aux
 function saveStorage(storage) {
-  console.log(storage)
   localStorage.storage = JSON.stringify(storage);
 }
 
@@ -64,12 +63,14 @@ export let logOutAction = () => (dispatch, getState) => {
 
 export let restoreSessionAcion = () => dispatch => {
   let storage = localStorage.getItem('storage')
-  storage = JSON.parse(storage)
-  if (storage && storage.user) {
-    dispatch({
-      type: LOGIN_SUCCESS,
-      payload: storage.user
-    })
+  if (storage !== null){
+    storage = JSON.parse(storage)
+    if (storage && storage.user) {
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: storage.user
+      })
+    }
   }
 }
 
