@@ -3,10 +3,10 @@ import styles from './favs.module.css'
 import Card from '../card/Card'
 import { connect } from "react-redux"
 
-function FavPage({ characters = [0] }) {
+function FavPage({ characters = [0], deleteCharacter }) {
     function renderCharacter(char, i) {
         return (
-            <Card hide {...char} key={i} id={char.id} />
+            <Card hideFav {...char} key={i} id={char.id} />
         )
     }
     return (
@@ -14,13 +14,15 @@ function FavPage({ characters = [0] }) {
             <h2>Favoritos</h2>
             {characters.map(renderCharacter)}
             {!characters.length && <h3>No hay personajes agregados</h3>}
+            {deleteCharacter && <div className={styles.alert_success}>El personaje ha sido eliminado de favoritos.</div>} 
         </div>
     )
 }
 
 function mapState({charsReducer}) {
     return {
-        characters: charsReducer.favorites
+        characters: charsReducer.favorites,
+        deleteCharacter: charsReducer.alert_delete
     }
 }
 

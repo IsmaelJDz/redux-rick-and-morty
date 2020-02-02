@@ -6,7 +6,10 @@ let initialData = {
   fetching: false,
   array: [],
   current: {},
-  favorites: []
+  favorites: [],
+  alert: false,
+  alert_success: false,
+  alert_delete: false
 };
 
 let URL = "https://rickandmortyapi.com/api/character";
@@ -21,6 +24,7 @@ let GET_FAVS_SUCCESS = "GET_FAVS_SUCCESS";
 let GET_FAVS_ERROR = "GET_FAVS_ERROR";
 
 let GET_NEW_CHARACTERS = "GET_NEW_CHARACTERS"
+let REMOVE_FAVORITE_CHARACTER = "REMOVE_FAVORITE_CHARACTER"
 
 //Reducer
 export default function reducer(state = initialData, action) {
@@ -54,7 +58,9 @@ export default function reducer(state = initialData, action) {
     case ADD_TO_FAVORITES:
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
+        alert: false,
+        alert_success: true,
       }
 
     case GET_FAVS:
@@ -81,7 +87,17 @@ export default function reducer(state = initialData, action) {
       return {
         ...state,
         fetching: false,
-        array: action.payload
+        array: action.payload,
+        alert: true,
+        alert_success: false
+      }
+
+    case REMOVE_FAVORITE_CHARACTER:
+      return {
+        ...state,
+        fetching: false,
+        favorites: action.payload,
+        alert_delete: true,
       }
 
     default:
@@ -113,31 +129,32 @@ export let retreiveFavs = () => (dispatch, getState) => {
 }
 
 export let addToFavoritesAction = (id) => (dispatch, getState) => {
-  debugger;
   let { array, favorites } = getState().charsReducer
   let { uid } = getState().user
   if (favorites.length > 0) {
-    // favorites.forEach(idFavorite => {
-    //   console.log(id)
-    //   console.log(idFavorite.id)
-    //   if(JSON.parse(id) === idFavorite.id) {
-    //       console.log('Este Id ya esta')
-    //       array.shift()
-    //       dispatch({
-    //         type: GET_NEW_CHARACTERS,
-    //         payload: [...array]
-    //       })
-    //   }
-    //   else {
-    //     let char = array.shift()
-    //     favorites.push(char)
-    //     updateDataBase(favorites, uid)
-    //     dispatch({
-    //       type: ADD_TO_FAVORITES,
-    //       payload: {array:[...array], favorites: [...favorites]}
-    //     })
-    //   }
-    // }) 
+
+    const idFavorites = favorites.find(item => item.id === id)
+
+    if (idFavorites !== undefined) {
+      if (idFavorites.id === id) {
+        array.shift()
+        dispatch({
+          type: GET_NEW_CHARACTERS,
+          payload: [...array],
+          alert: true
+        })
+      }
+    }
+    else 
+    {
+      let char = array.shift()
+        favorites.push(char)
+        updateDataBase(favorites, uid)
+        dispatch({
+          type: ADD_TO_FAVORITES,
+          payload: {array:[...array], favorites: [...favorites]}
+        })
+    }
   }
   else {
     let char = array.shift()
@@ -151,6 +168,16 @@ export let addToFavoritesAction = (id) => (dispatch, getState) => {
 
 }
 
+export let deleteCharacterFav = (id) => (dispatch, getState) => {
+  let { favorites } = getState().charsReducer;
+  let { uid } = getState().user
+  let resultFavs = favorites.filter(item => item.id !== id)
+  updateDataBase(resultFavs, uid)
+  dispatch({
+    type: REMOVE_FAVORITE_CHARACTER,
+    payload: [...resultFavs],
+  })
+}
 
 export let removeCharacterAction = () => (dispatch, getState) => {
   let { array } = getState().charsReducer;

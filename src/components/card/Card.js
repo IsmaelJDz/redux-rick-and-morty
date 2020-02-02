@@ -2,16 +2,22 @@ import React from 'react'
 import styles from './card.module.css'
 import FontAwesome from 'react-fontawesome'
 import PropTypes from 'prop-types'
+import { useDispatch } from "react-redux";
+import { deleteCharacterFav } from '../../redux/charsDuck'
 
 let rick = "https://rickandmortyapi.com/api/character/avatar/1.jpeg"
 
-function onClick(side) {
-    return () => console.log(side)
-}
 
 export default function Card({
-    name, image, rightClick, leftClick, hide, id
+    name, image, rightClick, leftClick, hideFav, id, hide
 }) {
+
+    const dispatch = useDispatch();
+    function onClick(side) {
+    //return () => console.log(side)
+    dispatch(deleteCharacterFav(side))
+}
+
     return (
         <div className={styles.container} id={id}>
             <div className={styles.card}>
@@ -19,24 +25,28 @@ export default function Card({
                 <p className={styles.name}>
                     {name}
                 </p>
-                {!hide && <div className={styles.actions}>
-                    <div
-                        onClick={leftClick || onClick("left")}
-                        className={styles.left}>
-                        <FontAwesome
-                            name="thumbs-down"
-                            size="2x"
-                        />
-                    </div>
-                    <div
-                        onClick={() => {rightClick(id)}}
-                        className={styles.right}>
-                        <FontAwesome
-                            name="heart"
-                            size="2x"
-                        />
-                    </div>
-                </div>}
+                <div className={styles.actions}> 
+                    {!hide &&
+                        <div
+                            onClick={() => {onClick(id)}}
+                            className={styles.left}>
+                            <FontAwesome
+                                name="thumbs-down"
+                                size="2x"
+                            />
+                        </div>
+                    }
+                    {!hideFav &&
+                        <div
+                            onClick={() => {rightClick(id)}}
+                            className={styles.right}>
+                            <FontAwesome
+                                name="heart"
+                                size="2x"
+                            />
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     )
